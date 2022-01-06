@@ -1,11 +1,16 @@
 import { Button, TextField, WithStyles } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles";
 import React from "react";
-import { LocalStorage } from "../../Storage/LocalStorage";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { v4 } from "uuid";
+import { LocalStorage, Todo } from "../../Storage/LocalStorage";
+import { addTodo } from "../../Storage/TodoStore/Actions/TodoActions";
 import Styles from "./styles";
 
 interface ITodoFormProps extends WithStyles<typeof Styles> {
   todoId?: string;
+  addTodo?: (todo: Todo) => void;
 }
 
 interface ITodoFormState {
@@ -13,6 +18,18 @@ interface ITodoFormState {
   category: string;
 }
 
+@(connect(
+  (state: any) => ({
+    todoList: state,
+  }),
+  (dispatch) =>
+    bindActionCreators(
+      {
+        addTodo,
+      },
+      dispatch
+    )
+) as any)
 class TodoForm extends React.PureComponent<ITodoFormProps, ITodoFormState> {
   localStore = new LocalStorage();
   constructor(props: ITodoFormProps) {
@@ -37,9 +54,12 @@ class TodoForm extends React.PureComponent<ITodoFormProps, ITodoFormState> {
 
   private handleTodo() {
     const { name, category } = this.state;
-    this.localStore.addTodo({ name, category, color: "" });
+    const { addTodo } = this.props;
+    const todo = { id: v4(), name, category, color: "" };
+    this.localStore.addTodo(todo);
 
     this.setState({ name: "", category: "" });
+    addTodo && addTodo(todo);
   }
 
   render() {

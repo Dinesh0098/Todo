@@ -7,6 +7,7 @@ import {
   WithStyles,
 } from "@material-ui/core";
 import React from "react";
+import TodoList from "../TodoList";
 import TodoModal from "../TodoModal";
 import AppHeader from "./AppHeader";
 import Styles from "./styles";
@@ -63,6 +64,7 @@ class TodoApp extends React.PureComponent<ITodoAppProps, ITodoAppState> {
             </div>
           </Fade>
         </Modal>
+        <TodoList />
       </>
     );
   }
